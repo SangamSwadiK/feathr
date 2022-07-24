@@ -1,7 +1,7 @@
-import React from 'react';
-import { Layout } from 'antd';
+import React from "react";
+import { Layout } from "antd";
 import { useAccount, useMsal } from "@azure/msal-react";
-import './header.css';
+import "./header.css";
 import HeaderWidget from "./headerWidget";
 import { appInsights } from "../../api/appInsights";
 
@@ -14,13 +14,23 @@ const Header: React.FC = () => {
   }
 
   return (
-    <Layout.Header className="layout-header" style={ { backgroundColor: "#fff", height : "auto" } }>
-      <span>In Feathr Feature Store, you can manage and share features.
-        <a target="_blank" rel="noreferrer"
-           href="https://linkedin.github.io/feathr/concepts/feathr-concepts-for-beginners.html"> Learn More</a>
+    <Layout.Header
+      className="layout-header"
+      style={{ backgroundColor: "#fff", height: "auto" }}
+    >
+      <span>
+        In Feathr Feature Store, you can manage and share features.
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href="https://linkedin.github.io/feathr/concepts/feathr-concepts-for-beginners.html"
+        >
+          {" "}
+          Learn More
+        </a>
       </span>
-      <span className='layout-header-right'>
-        <HeaderWidget username={ account?.username } />
+      <span className="layout-header-right">
+        <HeaderWidget username={account?.username} />
       </span>
     </Layout.Header>
   );

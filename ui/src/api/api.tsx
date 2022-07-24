@@ -6,7 +6,10 @@ import {
   Role,
   UserRole,
 } from "../models/model";
-import {InteractionRequiredAuthError, PublicClientApplication,} from "@azure/msal-browser";
+import {
+  InteractionRequiredAuthError,
+  PublicClientApplication,
+} from "@azure/msal-browser";
 import { getMsalConfig } from "../utils/utils";
 import { appInsights } from "./appInsights";
 
@@ -32,11 +35,13 @@ export const fetchDataSources = async (project: string) => {
 
 export const fetchProjects = async () => {
   const axios = await authAxios(msalInstance);
-  return axios.get<[]>(`${getApiBaseUrl()}/projects`, {
-    headers: {},
-  }).then((response) => {
-    return response.data;
-  });
+  return axios
+    .get<[]>(`${getApiBaseUrl()}/projects`, {
+      headers: {},
+    })
+    .then((response) => {
+      return response.data;
+    });
 };
 
 export const fetchFeatures = async (
@@ -60,7 +65,7 @@ export const fetchFeature = async (project: string, featureId: string) => {
   const axios = await authAxios(msalInstance);
   return axios
     .get<Feature>(`${getApiBaseUrl()}/features/${featureId}`, {
-      params: { project: project}
+      params: { project: project },
     })
     .then((response) => {
       return response.data;
@@ -118,7 +123,7 @@ export const updateFeature = async (feature: Feature, id: string) => {
 };
 
 export const listUserRole = async () => {
-  const token = await getIdToken(msalInstance);
+  await getIdToken(msalInstance);
   const axios = await authAxios(msalInstance);
   return await axios
     .get<UserRole[]>(`${getApiBaseUrl()}/userroles`, {})
@@ -185,22 +190,25 @@ export const getIdToken = async (
     account: activeAccount || accounts[0],
   };
 
-  let idToken = ""
+  let idToken = "";
 
   // Silently acquire an token for a given set of scopes. Will use cached token if available, otherwise will attempt to acquire a new token from the network via refresh token.
   // A known issue may cause token expire: https://github.com/AzureAD/microsoft-authentication-library-for-js/issues/4206
-  await msalInstance.acquireTokenSilent(request).then(response => {
-    idToken = response.idToken
-  })
-  .catch(error => {
-    // acquireTokenSilent can fail for a number of reasons, fallback to interaction
-    if (error instanceof InteractionRequiredAuthError) {
-      msalInstance.acquireTokenPopup(request).then(response => {
-        idToken = response.idToken
-      });
-    }
-    appInsights.trackEvent({name: "Get token error"}, { message: JSON.stringify(error)});
-  });
+  await msalInstance
+    .acquireTokenSilent(request)
+    .then((response) => {
+      idToken = response.idToken;
+    })
+    .catch((error) => {
+      appInsights.trackEvent({name: "Get token error"}, { message: JSON.stringify(error)});
+      // acquireTokenSilent can fail for a number of reasons, fallback to interaction
+      if (error instanceof InteractionRequiredAuthError) {
+        msalInstance.acquireTokenPopup(request).then((response) => {
+          idToken = response.idToken;
+        });
+      }
+    });
+
   return idToken;
 };
 
